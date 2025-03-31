@@ -1,0 +1,33 @@
+# C# WPF приложение
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+*.log
+.vs/
+.vscode/
+*.userosscache
+*.sln.docstates
+
+# React приложение
+monitoring-app/node_modules/
+monitoring-app/dist/
+monitoring-app/.env
+monitoring-app/.env.local
+monitoring-app/.env.development.local
+monitoring-app/.env.test.local
+monitoring-app/.env.production.local
+monitoring-app/npm-debug.log*
+monitoring-app/yarn-debug.log*
+monitoring-app/yarn-error.log*
+
+# IDE и редакторы
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db 

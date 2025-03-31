@@ -1,0 +1,69 @@
+﻿<Window x:Class="HttpServerApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HttpServerApp"
+        mc:Ignorable="d"
+        Title="HTTP Server &amp; Client" Height="600" Width="1000">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Server Section -->
+        <GroupBox Header="Сервер" Grid.Row="0" Margin="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Margin="5">
+                    <Label Content="Порт:" VerticalAlignment="Center"/>
+                    <TextBox x:Name="PortTextBox" Width="100" Margin="5,0"/>
+                    <Button x:Name="StartServerButton" Content="Запустить сервер" Click="StartServerButton_Click" Margin="5,0"/>
+                    <Button x:Name="ViewGraphsButton" Content="Просмотр графиков" Click="ViewGraphsButton_Click" Margin="5,0"/>
+                </StackPanel>
+                
+                <TextBox x:Name="ServerLogTextBox" Grid.Column="1" Grid.Row="1" 
+                         IsReadOnly="True" TextWrapping="Wrap" 
+                         VerticalScrollBarVisibility="Auto" Margin="5"/>
+            </Grid>
+        </GroupBox>
+        
+        <!-- Client Section -->
+        <GroupBox Header="Клиент" Grid.Row="1" Margin="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+                    <Label Content="URL:" VerticalAlignment="Center"/>
+                    <TextBox x:Name="UrlTextBox" Width="300" Margin="5,0"/>
+                    <ComboBox x:Name="MethodComboBox" Width="100" Margin="5,0">
+                        <ComboBoxItem Content="GET"/>
+                        <ComboBoxItem Content="POST"/>
+                    </ComboBox>
+                    <Button x:Name="SendRequestButton" Content="Отправить запрос" 
+                            Click="SendRequestButton_Click" Margin="5,0"/>
+                </StackPanel>
+                
+                <TextBox x:Name="RequestBodyTextBox" Grid.Row="1" Height="100" 
+                         TextWrapping="Wrap" Margin="5"/>
+                
+                <TextBox x:Name="ResponseTextBox" Grid.Row="2" 
+                         IsReadOnly="True" TextWrapping="Wrap" 
+                         VerticalScrollBarVisibility="Auto" Margin="5"/>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>
