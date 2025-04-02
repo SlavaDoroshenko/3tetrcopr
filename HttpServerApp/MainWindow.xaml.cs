@@ -26,6 +26,7 @@ public partial class MainWindow : Window
     private readonly List<RequestLog> requestLogs;
     private readonly string logFilePath = "logs.txt";
     private readonly object lockObject = new object();
+    private DateTime serverStartTime;
 
     public MainWindow()
     {
@@ -77,6 +78,7 @@ public partial class MainWindow : Window
                 httpListener.Prefixes.Add($"http://localhost:{port}/");
                 httpListener.Start();
                 isServerRunning = true;
+                serverStartTime = DateTime.Now;
                 StartServerButton.Content = "Остановить сервер";
                 monitoringTimer.Start();
 
@@ -154,7 +156,7 @@ public partial class MainWindow : Window
             string responseString;
             if (request.HttpMethod == "GET")
             {
-                responseString = await HandleGetRequest();
+                responseString = await HandleGetRequest(request);
             }
             else if (request.HttpMethod == "POST")
             {
@@ -185,17 +187,54 @@ public partial class MainWindow : Window
             response.Close();
         }
 
-        LogRequest(requestLog);
+        // Логируем запрос только если это не запрос мониторинга
+        if (request.Url?.PathAndQuery != "/stats")
+        {
+            LogRequest(requestLog);
+        }
+    }
+
+    private Task<string> HandleGetRequest(HttpListenerRequest request)
+    {
+        if (request.Url?.PathAndQuery == "/stats")
+        {
+            return HandleGetRequest();
+        }
+        else
+        {
+            return Task.FromResult(JsonSerializer.Serialize(new { message = "Сервер работает" }));
+        }
     }
 
     private Task<string> HandleGetRequest()
     {
+        var uptime = DateTime.Now - serverStartTime;
         var stats = new
         {
             TotalRequests = requestLogs.Count,
             GetRequests = requestLogs.Count(r => r.Method == "GET"),
             PostRequests = requestLogs.Count(r => r.Method == "POST"),
-            Uptime = DateTime.Now - (requestLogs.FirstOrDefault()?.Timestamp ?? DateTime.Now)
+            Uptime = new
+            {
+                TotalSeconds = uptime.TotalSeconds,
+                TotalMinutes = uptime.TotalMinutes,
+                TotalHours = uptime.TotalHours
+            },
+            ServerStartTime = serverStartTime.ToString("yyyy-MM-dd HH:mm:ss"),
+            StatusCodes = requestLogs
+                .GroupBy(r => r.StatusCode)
+                .Select(g => new { StatusCode = g.Key, Count = g.Count() })
+                .ToList(),
+            RequestHistory = requestLogs
+                .Select(log => new
+                {
+                    Timestamp = log.Timestamp,
+                    Method = log.Method,
+                    StatusCode = log.StatusCode,
+                    TimeFromStart = (log.Timestamp - serverStartTime).TotalSeconds
+                })
+                .OrderBy(x => x.Timestamp)
+                .ToList()
         };
 
         return Task.FromResult(JsonSerializer.Serialize(stats));
